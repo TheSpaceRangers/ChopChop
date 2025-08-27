@@ -5,13 +5,13 @@ module.exports = {
       2,
       'always',
       [
-        'feat',     // Nouvelle fonctionnalité
-        'fix',      // Correction de bug
-        'docs',     // Modification de la documentation
-        'style',    // Changements de style (formattage, etc.)
+        'feat', // Nouvelle fonctionnalité
+        'fix', // Correction de bug
+        'docs', // Modification de la documentation
+        'style', // Changements de style (formattage, etc.)
         'refactor', // Refactorisation du code
-        'test',     // Ajout ou modification de tests
-        'chore',    // Tâches de maintenance
+        'test', // Ajout ou modification de tests
+        'chore', // Tâches de maintenance
       ],
     ],
     'type-case': [0, 'always', 'lower'], // Désactiver pour permettre les types personnalisés
