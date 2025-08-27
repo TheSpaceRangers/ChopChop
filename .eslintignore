@@ -1,0 +1,2 @@
+# Ignorer les composants shadcn/ui qui exportent des constantes
+src/components/ui/*.tsx
