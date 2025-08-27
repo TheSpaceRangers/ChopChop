@@ -1,0 +1,224 @@
+---
+alwaysApply: true
+---
+
+# Standards de Test
+
+## Structure et organisation des tests
+
+### ✅ **Structure d'un test unitaire :**
+
+```typescript
+describe("ShoppingList Component", (): void => {
+  it("should add item to list", (): void => {
+    // Arrange
+    const mockItem: Item = {
+      id: "1",
+      name: "Test Item",
+      quantity: 1,
+      completed: false,
+    };
+    const { result } = renderHook(() => useShoppingList());
+
+    // Act
+    act((): void => {
+      result.current.addItem(mockItem);
+    });
+
+    // Assert
+    expect(result.current.lists[0].items).toContain(mockItem);
+  });
+});
+```
+
+### ✅ **Structure d'un test d'intégration :**
+
+```typescript
+describe("ShoppingList Integration", (): void => {
+  it("should persist list to localStorage", async (): Promise<void> => {
+    // Arrange
+    const { result } = renderHook(() => useShoppingList());
+    const testItem: Item = {
+      id: "test-1",
+      name: "Test Item",
+      quantity: 1,
+      completed: false,
+    };
+
+    // Act
+    act((): void => {
+      result.current.addItem(testItem);
+    });
+
+    // Assert
+    expect(localStorage.getItem).toHaveBeenCalledWith("shopping-lists");
+    expect(result.current.lists).toHaveLength(1);
+  });
+});
+```
+
+### ✅ **Test des composants React :**
+
+```typescript
+describe('ItemCard Component', (): void => {
+  const mockItem: Item = {
+    id: '1',
+    name: 'Test Item',
+    quantity: 1,
+    completed: false
+  };
+
+  it('should render item name', (): void => {
+    render(<ItemCard item={mockItem} onClick={jest.fn()} />);
+
+    expect(screen.getByText('Test Item')).toBeInTheDocument();
+  });
+
+  it('should call onClick when clicked', (): void => {
+    const mockOnClick = jest.fn();
+    render(<ItemCard item={mockItem} onClick={mockOnClick} />);
+
+    fireEvent.click(screen.getByRole('button'));
+
+    expect(mockOnClick).toHaveBeenCalledWith(mockItem);
+  });
+});
+```
+
+## Bonnes pratiques de test
+
+### 📝 **Nommage des tests :**
+
+```typescript
+// ✅ Bien
+describe("useShoppingList Hook", () => {
+  describe("addItem", () => {
+    it("should add item to empty list", () => {
+      /* ... */
+    });
+    it("should add item to existing list", () => {
+      /* ... */
+    });
+    it("should handle duplicate items", () => {
+      /* ... */
+    });
+  });
+
+  describe("removeItem", () => {
+    it("should remove existing item", () => {
+      /* ... */
+    });
+    it("should handle removing non-existent item", () => {
+      /* ... */
+    });
+  });
+});
+
+// ❌ À éviter
+describe("Test", () => {
+  it("test 1", () => {
+    /* ... */
+  });
+  it("should work", () => {
+    /* ... */
+  });
+});
+```
+
+### 🎯 **Types de tests à écrire :**
+
+#### **Tests unitaires (composants isolés) :**
+
+- Logique métier pure
+- Hooks personnalisés
+- Fonctions utilitaires
+- Validations
+
+#### **Tests d'intégration :**
+
+- Interaction entre composants
+- Flux de données complets
+- API calls
+- Persistance des données
+
+#### **Tests E2E (end-to-end) :**
+
+- Parcours utilisateur complets
+- Fonctionnalités critiques
+- Performance et accessibilité
+
+### 🛠️ **Outils et configuration :**
+
+#### **Jest + React Testing Library :**
+
+```typescript
+// jest.config.js
+module.exports = {
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
+  moduleNameMapping: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/main.tsx",
+    "!src/vite-env.d.ts",
+  ],
+};
+```
+
+#### **Setup des tests :**
+
+```typescript
+// src/setupTests.ts
+import "@testing-library/jest-dom";
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.localStorage = localStorageMock;
+
+// Mock matchMedia
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+```
+
+### 📊 **Coverage et qualité :**
+
+#### **Objectifs de couverture :**
+
+- **Statements** : > 80%
+- **Branches** : > 75%
+- **Functions** : > 85%
+- **Lines** : > 80%
+
+#### **Écrire des tests maintenables :**
+
+- Tests lisibles et compréhensibles
+- Pas de logique complexe dans les tests
+- Utilisation de helpers et factories
+- Tests indépendants les uns des autres
+
+## Instructions pour l'IA assistant
+
+- **Créer** : Des tests pour toute nouvelle fonctionnalité
+- **Tester** : Les fonctionnalités critiques en priorité
+- **Suivre** : La structure recommandée pour les tests
+- **Utiliser** : Les bonnes pratiques de nommage
+- **Maintenir** : Une couverture de test suffisante

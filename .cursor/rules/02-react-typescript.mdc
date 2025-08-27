@@ -1,0 +1,237 @@
+---
+alwaysApply: true
+---
+
+# Patterns React & Conventions TypeScript
+
+## Structure d'un composant React
+
+#### ✅ **Structure recommandée :**
+
+```typescript
+import React, { useState, useEffect } from 'react';
+import { ItemType } from '@/types';
+
+interface ComponentNameProps {
+  items: ItemType[];
+  onItemClick: (item: ItemType) => void;
+  className?: string;
+}
+
+export const ComponentName: React.FC<ComponentNameProps> = ({
+  items,
+  onItemClick,
+  className = ''
+}) => {
+  // 1. Hooks personnalisés
+  const customHook = useCustomHook();
+
+  // 2. Hooks React
+  const [state, setState] = useState(initialState);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 3. Handlers et fonctions utilitaires
+  const handleClick = useCallback(() => {
+    // logique
+  }, [dependencies]);
+
+  // 4. Effets
+  useEffect(() => {
+    // effets secondaires
+  }, [dependencies]);
+
+  // 5. Rendu TSX
+  return (
+    <div className={className}>
+      {/* TSX */}
+    </div>
+  );
+};
+```
+
+#### ❌ **À éviter :**
+
+- Mélanger logique métier et TSX
+- Définir des fonctions à l'intérieur du TSX
+- Utiliser `any` au lieu de types spécifiques
+- Créer des composants trop volumineux (> 200 lignes)
+
+### Conventions de nommage TypeScript
+
+#### **Variables et fonctions :**
+
+```typescript
+// ✅ Bien
+const shoppingList: Item[] = [];
+const getItemById = (id: string): Item | undefined => {};
+const formatPrice = (price: number): string => {};
+const isItemCompleted = (item: Item): boolean => {};
+
+// ❌ À éviter
+const list: any[] = [];
+const get = (id: any): any => {};
+const format = (price: any): any => {};
+const completed = (item: any): any => {};
+```
+
+#### **Constantes :**
+
+```typescript
+// ✅ Bien
+const MAX_ITEMS_PER_LIST = 50;
+const DEFAULT_ITEM_QUANTITY = 1;
+const CATEGORIES = ["fruits", "vegetables"] as const;
+
+// ❌ À éviter
+const max = 50;
+const def = 1;
+const cats = ["fruits", "vegetables"];
+```
+
+#### **Types et Interfaces :**
+
+```typescript
+// ✅ Bien
+interface ShoppingList {
+  id: string;
+  name: string;
+  items: Item[];
+  createdAt: Date;
+}
+
+type ItemStatus = "pending" | "completed" | "cancelled";
+
+type ShoppingListProps = {
+  list: ShoppingList;
+  onItemToggle: (itemId: string) => void;
+};
+
+// ❌ À éviter
+interface shoppinglist {
+  id: any;
+  name: any;
+  items: any[];
+  createdAt: any;
+}
+
+type itemStatus = "pending" | "completed" | "cancelled";
+```
+
+### Gestion des erreurs et loading
+
+#### **Pattern recommandé :**
+
+```typescript
+interface UseAsyncState<T> {
+  data: T | null;
+  error: string | null;
+  isLoading: boolean;
+}
+
+const Component = (): JSX.Element => {
+  const { data, error, isLoading } = useCustomHook();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
+
+  return <div>{/* contenu */}</div>;
+};
+```
+
+## Patterns et anti-patterns
+
+### ✅ **Patterns à suivre :**
+
+#### **Hook personnalisé pour la logique métier :**
+
+```typescript
+interface UseShoppingListReturn {
+  lists: ShoppingList[];
+  isLoading: boolean;
+  error: string | null;
+  addItem: (item: Item) => void;
+  removeItem: (itemId: string) => void;
+}
+
+export const useShoppingList = (listId?: string): UseShoppingListReturn => {
+  const [lists, setLists] = useState<ShoppingList[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const addItem = useCallback((item: Item): void => {
+    // logique d'ajout
+  }, []);
+
+  const removeItem = useCallback((itemId: string): void => {
+    // logique de suppression
+  }, []);
+
+  return {
+    lists,
+    isLoading,
+    error,
+    addItem,
+    removeItem,
+  };
+};
+```
+
+#### **Composition de composants :**
+
+```typescript
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Card = ({ children, className }: CardProps): JSX.Element => (
+  <div className={`card ${className || ''}`}>{children}</div>
+);
+
+// Utilisation
+<Card>
+  <Card.Header title="Titre" />
+  <Card.Body>
+    <p>Contenu</p>
+  </Card.Body>
+  <Card.Footer>
+    <Button>Action</Button>
+  </Card.Footer>
+</Card>
+```
+
+### ❌ **Anti-patterns à éviter :**
+
+#### **Props drilling :**
+
+```typescript
+// ❌ À éviter
+const GrandParent = (): JSX.Element => (
+  <Parent user={user}>
+    <Child user={user} />
+  </Parent>
+);
+
+// ✅ Utiliser Context ou state management
+const UserContext = createContext<User | null>(null);
+```
+
+#### **Components trop volumineux :**
+
+```typescript
+// ❌ À éviter
+const HugeComponent = (): JSX.Element => {
+  // 300+ lignes de code
+  // Logique métier mélangée avec TSX
+  // Difficile à tester et maintenir
+};
+```
+
+## Instructions pour l'IA assistant
+
+- **Créer** : Des composants suivant la structure recommandée
+- **Utiliser** : Les patterns établis plutôt que de réinventer
+- **Préférer** : La composition à l'héritage
+- **Respecter** : Les conventions de nommage TypeScript établies
+- **Éviter** : Les anti-patterns listés
+- **Toujours utiliser** : TSX au lieu de JSX dans les exemples

@@ -1,0 +1,138 @@
+---
+alwaysApply: true
+---
+
+# Règles Git et Workflow de Développement
+
+## Convention de nommage des commits
+
+Utilisez le format **Conventional Commits** pour tous les commits :
+
+```
+<type>(<scope>): <description>
+
+[corps optionnel]
+
+[pied de page optionnel]
+```
+
+### Types de commits autorisés :
+
+- **feat** : Nouvelle fonctionnalité
+- **fix** : Correction de bug
+- **docs** : Modification de la documentation
+- **style** : Changements de style (espaces, formatage, etc.)
+- **refactor** : Refactorisation du code
+- **test** : Ajout ou modification de tests
+- **chore** : Tâches de maintenance (dépendances, config, etc.)
+
+### Exemples de commits :
+
+```bash
+feat: add shopping list sharing functionality
+fix(ui): correct mobile quantity display
+docs: update README with new features
+refactor: extract validation logic into custom hook
+```
+
+## Gestion des branches
+
+### Règles générales :
+
+- **NE JAMAIS** travailler directement sur `main` ou `master`
+- Toujours créer une branche pour chaque fonctionnalité ou correction
+
+### Convention de nommage des branches :
+
+```
+feats/<nom-de-la-fonctionnalite>
+fixes/<nom-du-bug>
+docs/<sujet-de-la-doc>
+refactors/<description-du-refactor>
+```
+
+## Workflow de développement
+
+### 1. Démarrage d'une nouvelle fonctionnalité :
+
+```bash
+# Créer et basculer sur une nouvelle branche
+git checkout -b feats/nom-de-la-fonctionnalite
+
+# Travailler sur la fonctionnalité...
+```
+
+### 2. Avant de commiter :
+
+- ✅ **Lancer les lints** : `npm run lint`
+- ✅ **Lancer les tests** : `npm run test`
+- ✅ **Vérifier que tout fonctionne** : `npm run build`
+- ✅ **Ajouter uniquement les fichiers nécessaires**
+
+### 3. Commit et push :
+
+```bash
+# Ajouter les fichiers modifiés
+git add .
+
+# Commiter avec la convention
+git commit -m "feat: description claire de la fonctionnalité"
+
+# Pousser la branche
+git push origin feats/nom-de-la-fonctionnalite
+```
+
+### 4. Pull Request :
+
+- Créer une PR sur GitHub/GitLab
+- **Titre** : Description claire de la fonctionnalité
+- **Description** : Détails de l'implémentation, captures d'écran si UI
+- **Labels** : `feature`, `bugfix`, `documentation`, etc.
+- **Reviewers** : Au moins un reviewer requis
+- **Tests** : S'assurer que tous les tests passent sur CI/CD
+
+## Pré-commit hooks
+
+### Configuration recommandée :
+
+Créer un fichier `.husky/pre-commit` :
+
+```bash
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run lint
+npm run test
+```
+
+### Installation :
+
+```bash
+npx husky-init && npm install
+npx husky add .husky/pre-commit "npm run lint && npm run test"
+```
+
+## Règles de qualité du code
+
+### Critères pour accepter une PR :
+
+- ✅ **Tests passent** : Tous les tests unitaires et d'intégration
+- ✅ **Lint passe** : Aucune erreur de style
+- ✅ **Build passe** : L'application se compile sans erreur
+- ✅ **Documentation** : README mis à jour si nécessaire
+- ✅ **Performance** : Pas de régression de performance
+- ✅ **Accessibilité** : Respect des standards WCAG
+
+### Recommandations :
+
+- Garder les commits atomiques (une fonctionnalité = un commit)
+- Écrire des messages de commit en anglais (corps du projet)
+- Utiliser des noms de branches descriptifs mais concis
+
+## Instructions pour l'IA assistant
+
+- **Vérifier** : Les commits respectent la convention avant validation
+- **Suggérer** : Des noms de branches appropriés selon la fonctionnalité
+- **Rappeler** : Les étapes de pré-commit (lint + tests) avant chaque commit
+- **Guider** : Vers la création de PR bien documentées
+- **Prévenir** : Si l'utilisateur tente de travailler sur main/master

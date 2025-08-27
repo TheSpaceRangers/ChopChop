@@ -1,0 +1,147 @@
+---
+alwaysApply: true
+---
+
+# Optimisations de Performance
+
+## Standards de performance
+
+### ✅ **Optimisations recommandées :**
+
+#### **Utiliser React.memo pour les composants statiques :**
+
+```typescript
+interface ItemCardProps {
+  item: Item;
+  onClick: (item: Item) => void;
+}
+
+const ItemCard = React.memo<ItemCardProps>(({ item, onClick }): JSX.Element => (
+  <div onClick={() => onClick(item)}>
+    {item.name}
+  </div>
+));
+```
+
+#### **useCallback pour les fonctions passées en props :**
+
+```typescript
+const handleItemClick = useCallback((itemId: string): void => {
+  setSelectedItem(itemId);
+}, []);
+```
+
+#### **useMemo pour les calculs coûteux :**
+
+```typescript
+const sortedItems = useMemo((): Item[] => {
+  return items.sort((a, b) => a.name.localeCompare(b.name));
+}, [items]);
+```
+
+#### **Lazy loading des composants :**
+
+```typescript
+const ExpensiveComponent = lazy(() => import('./ExpensiveComponent'));
+
+const App = (): JSX.Element => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ExpensiveComponent />
+  </Suspense>
+);
+```
+
+#### **Optimisation des re-rendus :**
+
+```typescript
+// ✅ Bien : extraction de composants
+const ItemList = ({ items }: { items: Item[] }): JSX.Element => (
+  <div>
+    {items.map(item => (
+      <ItemCard key={item.id} item={item} />
+    ))}
+  </div>
+);
+
+// ✅ Bien : utilisation de useMemo pour les objets complexes
+const componentProps = useMemo(() => ({
+  items,
+  onItemClick: handleItemClick,
+  theme
+}), [items, handleItemClick, theme]);
+```
+
+### ❌ **Performance à éviter :**
+
+- Créer des fonctions dans le TSX
+- Utiliser des objets/fonctions inline comme dépendances
+- Faire des calculs coûteux dans le rendu
+- Ne pas optimiser les listes avec beaucoup d'éléments
+- Oublier de nettoyer les effets secondaires
+
+### ⚡ **Bonnes pratiques de performance :**
+
+#### **Debouncing pour les recherches :**
+
+```typescript
+const useDebounce = (value: string, delay: number): string => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+```
+
+#### **Virtualisation pour les longues listes :**
+
+```typescript
+// Pour les listes très longues, utiliser une bibliothèque de virtualisation
+// comme react-window ou react-virtualized
+const VirtualizedList = ({ items }: { items: Item[] }): JSX.Element => (
+  <FixedSizeList
+    height={400}
+    width={300}
+    itemCount={items.length}
+    itemSize={35}
+  >
+    {({ index, style }) => (
+      <div style={style}>
+        {items[index].name}
+      </div>
+    )}
+  </FixedSizeList>
+);
+```
+
+#### **Optimisation du bundle :**
+
+- Utiliser des imports dynamiques pour le code splitting
+- Lazy loading des routes
+- Tree shaking avec les imports ES6
+- Compression et minification
+
+#### **Monitoring des performances :**
+
+```typescript
+// Utiliser React DevTools Profiler
+// Mesurer les Core Web Vitals
+// Monitorer les bundle sizes
+// Tester les performances sur mobile
+```
+
+## Instructions pour l'IA assistant
+
+- **Optimiser** : Automatiquement avec memo/callback quand nécessaire
+- **Utiliser** : Les patterns de performance établis
+- **Éviter** : Les anti-patterns de performance
+- **Suggérer** : Des optimisations quand le code pourrait être amélioré
+- **Prioriser** : Les optimisations impactant l'utilisateur final
