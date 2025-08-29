@@ -1,11 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+  import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY as string;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Env manquantes: VITE_SUPABASE_URL et/ou VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const getAuthHeaders = async (): Promise<HeadersInit> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token ?? supabaseAnonKey;
+  return { Authorization: `Bearer ${token}`, apikey: supabaseAnonKey };
+};
 
 export interface Database {
   public: {

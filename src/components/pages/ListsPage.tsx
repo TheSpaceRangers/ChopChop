@@ -1,39 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Plus, ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useShoppingLists } from '@/hooks/useShoppingLists';
+
+import { useGetShoppingLists } from '@/hooks/useGetShoppingLists';
 
 const ListsPage: React.FC = () => {
-  const [newListName, setNewListName] = useState('');
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  
-  const {
-    lists,
-    isLoading,
-    error,
-    createList,
-    deleteList,
-  } = useShoppingLists();
-
-  const handleCreateList = async (): Promise<void> => {
-    if (!newListName.trim()) return;
-    
-    await createList(newListName.trim());
-    setNewListName('');
-    setShowCreateForm(false);
-  };
-
-  const handleDeleteList = async (listId: string): Promise<void> => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette liste ?')) {
-      await deleteList(listId);
-    }
-  };
+  const { lists, isLoading, error } = useGetShoppingLists();
 
   const getListStats = () => {
     // Pour l'instant, on retourne des stats factices
@@ -61,54 +39,10 @@ const ListsPage: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Mes Listes</h1>
-        <Button 
-          size="sm" 
-          onClick={() => setShowCreateForm(true)}
-        >
-          <Plus className="mr-1" size={16} />
-          Nouvelle
-        </Button>
       </div>
 
       {/* Message d'erreur */}
       <ErrorMessage error={error} />
-
-      {/* Formulaire de création */}
-      {showCreateForm && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Nom de la liste"
-                value={newListName}
-                onChange={(e) => setNewListName(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onKeyPress={(e) => e.key === 'Enter' && handleCreateList()}
-              />
-              <div className="flex gap-2">
-                <Button 
-                  size="sm" 
-                  onClick={handleCreateList}
-                  disabled={!newListName.trim()}
-                >
-                  Créer
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setNewListName('');
-                  }}
-                >
-                  Annuler
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Liste des listes avec Cards */}
       <div className="space-y-3">
@@ -125,10 +59,10 @@ const ListsPage: React.FC = () => {
             </CardContent>
           </Card>
         ) : (
-          lists.map((list) => {
+          lists.map(list => {
             const { completed, total } = getListStats();
             const status = getListStatus(completed, total);
-            
+
             return (
               <Card
                 key={list.id}
@@ -139,7 +73,9 @@ const ListsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <ShoppingCart className="text-blue-600" size={20} />
                       <div>
-                        <h3 className="font-medium text-gray-900">{list.name}</h3>
+                        <h3 className="font-medium text-gray-900">
+                          {list.name}
+                        </h3>
                         <p className="text-sm text-gray-600">
                           {completed}/{total} articles
                         </p>
@@ -154,10 +90,6 @@ const ListsPage: React.FC = () => {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteList(list.id);
-                        }}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 size={16} />
