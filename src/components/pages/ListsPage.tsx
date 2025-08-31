@@ -9,6 +9,7 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 import { useCreateShoppingList } from '@/hooks/useCreateShoppingList';
+import { useDeleteShoppingList } from '@/hooks/useDeleteShoppingList';
 import { useGetShoppingLists } from '@/hooks/useGetShoppingLists';
 
 const ListsPage: React.FC = () => {
@@ -18,6 +19,11 @@ const ListsPage: React.FC = () => {
     isCreating,
     error: createError,
   } = useCreateShoppingList();
+  const {
+    deleteList,
+    isDeleting,
+    error: deleteError,
+  } = useDeleteShoppingList();
   const [name, setName] = useState('');
 
   const getListStats = () => {
@@ -43,6 +49,11 @@ const ListsPage: React.FC = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    const ok = await deleteList(id);
+    if (ok) await refetch();
+  };
+
   if (isLoading) {
     return (
       <div className="p-4">
@@ -59,7 +70,7 @@ const ListsPage: React.FC = () => {
       </div>
 
       {/* Erreurs */}
-      <ErrorMessage error={error || createError} />
+      <ErrorMessage error={error || createError || deleteError} />
 
       {/* Formulaire de création */}
       <form onSubmit={handleCreate} className="flex gap-2">
@@ -123,6 +134,9 @@ const ListsPage: React.FC = () => {
                         size="sm"
                         variant="ghost"
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        aria-label={`Supprimer ${list.name}`}
+                        disabled={isDeleting}
+                        onClick={() => handleDelete(list.id)}
                       >
                         <Trash2 size={16} />
                       </Button>
