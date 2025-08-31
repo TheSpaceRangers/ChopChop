@@ -3,7 +3,8 @@ import { vi } from 'vitest';
 
 // Mock des variables d'environnement pour les tests
 vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co');
-vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key');
+// Clé alignée avec src/lib/supabase.ts
+vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY', 'test-anon-key');
 
 // Mock localStorage
 const localStorageMock = {
