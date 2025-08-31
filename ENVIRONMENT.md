@@ -7,7 +7,8 @@ Pour que l'application fonctionne avec Supabase, vous devez créer un fichier `.
 ```env
 # Supabase Configuration
 VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Clé publishable (anon) - libérée côté client
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_anon_key
 ```
 
 ## Comment obtenir ces valeurs
@@ -52,4 +53,5 @@ CREATE TABLE shopping_items (
 
 - Le fichier `.env` ne doit jamais être commité dans Git
 - Utilisez des Row Level Security (RLS) dans Supabase pour sécuriser vos données
-- La clé anon est publique et peut être exposée côté client
+- La clé anon (publishable) est publique et peut être exposée côté client
+- Pour le dev, l’app ouvre automatiquement une session anonyme (voir `ensureAuthSession`).

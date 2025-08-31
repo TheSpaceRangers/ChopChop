@@ -122,17 +122,28 @@ Créez un fichier `.env` :
 
 ```env
 VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_anon_key
 ```
 
-### Hooks Pre-commit
+### Auth anonyme (dev)
 
-Les hooks Husky sont automatiquement configurés pour :
+L'application ouvre automatiquement une session anonyme si aucune session n'est présente afin que `supabase.functions.invoke` envoie un JWT valide.
 
-- ✅ Vérifier le linting (ESLint)
-- ✅ Lancer les tests (Vitest)
-- ✅ Vérifier les types (TypeScript)
-- ✅ Valider le format des commits (Commitlint)
+```ts
+// src/lib/supabase.ts
+export const ensureAuthSession = async (): Promise<void> => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) await supabase.auth.signInAnonymously();
+};
+```
+
+```ts
+// src/main.tsx
+import { ensureAuthSession } from '@/lib/supabase';
+ensureAuthSession().catch(console.error);
+```
 
 ## 📱 Fonctionnalités Prévues
 
@@ -164,9 +175,9 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 Pour toute question ou problème :
 
-- 🐛 [Issues GitHub](https://github.com/votre-username/chopchop/issues)
+- 🐛 Issues GitHub
 - 📧 Email : support@chopchop.app
-- 💬 Discord : [Serveur ChopChop](https://discord.gg/chopchop)
+- 💬 Discord : Serveur ChopChop
 
 ---
 

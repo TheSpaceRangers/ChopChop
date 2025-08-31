@@ -16,7 +16,6 @@ export const useGetShoppingLists = (): UseGetShoppingListsReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Base URL des Edge Functions déployées
   const fetchLists = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
