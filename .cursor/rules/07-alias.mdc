@@ -1,0 +1,16 @@
+---
+alwaysApply: true
+description: Alias d'import Vite `@` pointant vers `src`
+---
+
+# Alias d'import
+
+- L'alias `@` pointe vers `./src` (voir [vite.config.ts](mdc:vite.config.ts)).
+- Préférer `@/chemin/...` aux imports relatifs profonds (`../../..`).
+
+## Exemples
+
+```ts
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+```
