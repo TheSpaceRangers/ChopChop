@@ -1,0 +1,36 @@
+---
+alwaysApply: true
+description: Structure du projet ChopChop et points d'entrée
+---
+
+# Structure du projet et technologies
+
+- Frontend React + TypeScript (Vite) avec Tailwind CSS et shadcn/ui.
+- Stockage cible Supabase (PostgreSQL) et fonctions Edge (voir règles dédiées).
+
+## Arborescence clé
+
+```
+src/
+├── components/
+│   ├── ui/            # Composants shadcn/ui
+│   ├── layout/        # Layout/navigation
+│   └── pages/         # Pages (routing)
+├── lib/               # Utilitaires (ex: cn)
+├── assets/            # Images/icônes
+└── index.css          # Thème Tailwind v4
+```
+
+## Points d'entrée et configuration
+
+- Application: [src/main.tsx](mdc:src/main.tsx), [src/App.tsx](mdc:src/App.tsx)
+- Build: [vite.config.ts](mdc:vite.config.ts) (alias `@` → `src`), [tsconfig.json](mdc:tsconfig.json)
+- Tests: [vitest.config.ts](mdc:vitest.config.ts), setup: [src/setupTests.ts](mdc:src/setupTests.ts)
+- Styles: [src/index.css](mdc:src/index.css) (design tokens, dark mode)
+- Utilitaires UI: [src/lib/utils.ts](mdc:src/lib/utils.ts)
+
+## Règles rapides
+
+- Importer via l'alias `@` plutôt que des chemins relatifs profonds.
+- Créer des composants petits et réutilisables; extraire la logique dans des hooks.
+- Respecter les conventions de nommage et le typage strict TypeScript.

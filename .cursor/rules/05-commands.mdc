@@ -1,151 +1,19 @@
 ---
 alwaysApply: true
+description: Scripts npm et commandes de développement
 ---
 
-# Commandes et Permissions pour l'IA
+# Commandes & scripts
 
-## Commandes toujours autorisées
+Référence: [package.json](mdc:package.json)
 
-### ✅ **Commandes de développement quotidiennes :**
+- **Démarrer en dev**: `npm run dev`
+- **Build**: `npm run build`
+- **Prévisualisation**: `npm run preview`
+- **Lint**: `npm run lint` | auto-fix: `npm run lint:fix`
+- **Type-check**: `npm run type-check`
+- **Tests**: `npm run test` | watch: `npm run test:watch` | coverage: `npm run test:coverage`
+- **Format**: `npm run format` | check: `npm run format:check`
+- **Pré-commit**: `npm run pre-commit` (lint + tests + type-check)
 
-- `npm run lint` - Vérifier la qualité du code
-- `npm run test` - Lancer les tests unitaires
-- `npm run build` - Construire l'application pour la production
-- `npm run dev` - Démarrer le serveur de développement
-- `git status` - Voir l'état du dépôt Git
-- `git diff` - Voir les changements en attente
-- `git log --oneline` - Voir l'historique des commits
-
-### ✅ **Commandes d'analyse et diagnostic :**
-
-- `npm run type-check` - Vérifier les types TypeScript
-- `npm audit` - Analyser les vulnérabilités des dépendances
-- `npm ls --depth=0` - Lister les dépendances installées
-- `du -sh node_modules` - Voir la taille du dossier node_modules
-
-## Commandes conditionnelles
-
-### ⚠️ **Commandes nécessitant vérification :**
-
-- `git add .` - Seulement après vérification des changements
-- `git commit -m "message"` - Seulement avec message conventionnel en anglais
-- `git push` - Seulement sur une branche feature (pas main/master)
-- `npm install <package>` - Seulement pour les dépendances nécessaires et justifiées
-- `npm uninstall <package>` - Seulement pour les dépendances inutilisées
-
-### ⚠️ **Commandes de gestion Git :**
-
-- `git checkout -b <branch-name>` - Suivre la convention de nommage des branches
-- `git merge <branch>` - Après vérification des conflits potentiels
-- `git rebase <branch>` - Avec précaution et communication
-- `git reset --soft HEAD~1` - Seulement pour corriger le dernier commit
-
-## Commandes interdites
-
-### ❌ **Commandes dangereuses :**
-
-- `git push --force` ou `git push -f` - Jamais utiliser force push
-- `git reset --hard` - Risque de perte de données
-- `git push --force-with-lease` - Préférer une approche collaborative
-- `rm -rf node_modules` - Utiliser `npm ci` ou `npm install` à la place
-
-### ❌ **Commandes de suppression :**
-
-- `rm -rf .git` - Ne jamais supprimer l'historique Git
-- Suppression de fichiers importants sans confirmation
-- Modification des fichiers de configuration critiques sans validation
-
-### ❌ **Commandes de déploiement :**
-
-- `npm run deploy` - Nécessite validation manuelle
-- `git push origin main` - Toujours passer par une PR
-- Commandes de déploiement en production
-
-## Workflow de commandes recommandé
-
-### 🚀 **Développement quotidien :**
-
-```bash
-# 1. Vérifier l'état du projet
-git status
-
-# 2. Lancer les tests et lint
-npm run lint
-npm run test
-
-# 3. Démarrer le développement
-npm run dev
-```
-
-### ✅ **Avant de commiter :**
-
-```bash
-# 1. Vérifier la qualité du code
-npm run lint
-npm run test
-npm run build
-
-# 2. Ajouter les fichiers (avec vérification)
-git add .
-
-# 3. Commiter avec message conventionnel
-git commit -m "feat: add shopping list functionality"
-```
-
-### 🔄 **Création d'une fonctionnalité :**
-
-```bash
-# 1. Créer une branche feature
-git checkout -b feats/add-shopping-list
-
-# 2. Développer la fonctionnalité
-# ... travail sur la fonctionnalité ...
-
-# 3. Tester et valider
-npm run lint
-npm run test
-npm run build
-
-# 4. Commiter
-git add .
-git commit -m "feat: implement shopping list component"
-
-# 5. Pousser
-git push origin feats/add-shopping-list
-```
-
-### 📦 **Gestion des dépendances :**
-
-```bash
-# ✅ Recommandé
-npm install react-router-dom  # Nouvelle dépendance nécessaire
-npm uninstall lodash         # Dépendance inutilisée
-
-# ❌ À éviter
-npm install webpack          # Dépendance non nécessaire pour Vite
-npm install left-pad         # Package deprecated
-```
-
-## Règles de sécurité
-
-### 🔒 **Vérifications obligatoires :**
-
-- Toujours vérifier les changements avant `git add .`
-- Tester l'application après `npm install`
-- Valider les types TypeScript avant commit
-- S'assurer que les tests passent avant push
-
-### 🚨 **Signes d'alerte :**
-
-- Erreurs de build non résolues
-- Tests qui échouent
-- Warnings de sécurité npm
-- Conflits Git non résolus
-
-## Instructions pour l'IA assistant
-
-- **Vérifier** : Toujours les commandes avant de les exécuter
-- **Respecter** : Les permissions définies ci-dessus
-- **Préférer** : Les workflows recommandés
-- **Alerter** : En cas de commandes potentiellement dangereuses
-- **Guider** : L'utilisateur vers les bonnes pratiques
+Astuce: Exécuter `pre-commit` localement avant d'ouvrir une PR pour éviter les retours.

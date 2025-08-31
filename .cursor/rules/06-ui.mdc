@@ -1,0 +1,21 @@
+---
+globs: *.tsx,*.css
+description: UI avec Tailwind CSS v4 et shadcn/ui
+---
+
+# UI & Design System
+
+- Utiliser les composants shadcn/ui disponibles dans `src/components/ui/*`.
+- Composer les styles avec Tailwind; préférer `cn()` pour fusionner les classes.
+- Thème via [src/index.css](mdc:src/index.css) (tokens, variantes dark).
+
+## Bonnes pratiques
+
+- Préférer la composition de petits composants réutilisables.
+- Exposer des props minimales et explicites; passer les `className` vers la racine.
+- Respecter accessibilité: labels, `aria-*`, focus visibles.
+- Utiliser les icônes `lucide-react` quand nécessaire.
+
+## Utilitaires
+
+- `cn` pour fusion de classes: [src/lib/utils.ts](mdc:src/lib/utils.ts)
