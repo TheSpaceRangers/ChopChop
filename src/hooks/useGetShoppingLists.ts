@@ -2,7 +2,7 @@ import type { ShoppingList } from '@/lib/supabase';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAuthHeaders } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface UseGetShoppingListsReturn {
   lists: ShoppingList[];
@@ -10,9 +10,6 @@ interface UseGetShoppingListsReturn {
   error: string | null;
   refetch: () => Promise<void>;
 }
-
-const FUNCTIONS_BASE_URL =
-    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
 export const useGetShoppingLists = (): UseGetShoppingListsReturn => {
   const [lists, setLists] = useState<ShoppingList[]>([]);
@@ -24,21 +21,17 @@ export const useGetShoppingLists = (): UseGetShoppingListsReturn => {
     try {
       setIsLoading(true);
       setError(null);
-
-      const res = await fetch(
-        `${FUNCTIONS_BASE_URL}/get-shopping-lists`,
-        {
-          method: 'GET',
-          headers: await getAuthHeaders()
-        }
-      );
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const { lists: fetched } = await res.json();
-
-      setLists(fetched || []);
+      const { data, error } =
+        await supabase.functions.invoke('get-shopping-lists');
+      if (error) throw error;
+      const fetched = data?.lists ?? [];
+      setLists(fetched);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement des listes');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erreur lors du chargement des listes'
+      );
     } finally {
       setIsLoading(false);
     }
