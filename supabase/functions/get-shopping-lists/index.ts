@@ -2,14 +2,16 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const baseCors = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Max-Age': '86400',
 };
 
-Deno.serve(async (req) => {
+Deno.serve(async req => {
   // Répond dynamiquement aux headers demandés par le préflight
   if (req.method === 'OPTIONS') {
-    const reqHeaders = req.headers.get('Access-Control-Request-Headers') ?? 'authorization, x-client-info, apikey, content-type';
+    const reqHeaders =
+      req.headers.get('Access-Control-Request-Headers') ??
+      'authorization, x-client-info, apikey, content-type';
     return new Response('ok', {
       headers: {
         ...baseCors,
@@ -41,7 +43,8 @@ Deno.serve(async (req) => {
         ...baseCors,
         'Content-Type': 'application/json',
         // Facultatif: refléter les headers demandés aussi sur la réponse normale
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+        'Access-Control-Allow-Headers':
+          'authorization, x-client-info, apikey, content-type',
       },
       status: 200,
     });
@@ -50,7 +53,8 @@ Deno.serve(async (req) => {
       headers: {
         ...baseCors,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+        'Access-Control-Allow-Headers':
+          'authorization, x-client-info, apikey, content-type',
       },
       status: 400,
     });

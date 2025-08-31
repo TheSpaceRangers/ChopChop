@@ -1,12 +1,9 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-// Mock des variables d'environnement pour les tests
 vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co');
-// Clé alignée avec src/lib/supabase.ts
 vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY', 'test-anon-key');
 
-// Mock localStorage
 const localStorageMock = {
   getItem: vi.fn(),
   setItem: vi.fn(),
@@ -18,7 +15,6 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
-// Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({

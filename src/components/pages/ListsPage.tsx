@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { Plus, ShoppingCart, Trash2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
+import { useCreateShoppingList } from '@/hooks/useCreateShoppingList';
 import { useGetShoppingLists } from '@/hooks/useGetShoppingLists';
 
 const ListsPage: React.FC = () => {
-  const { lists, isLoading, error } = useGetShoppingLists();
+  const { lists, isLoading, error, refetch } = useGetShoppingLists();
+  const {
+    createList,
+    isCreating,
+    error: createError,
+  } = useCreateShoppingList();
+  const [name, setName] = useState('');
 
   const getListStats = () => {
     // Pour l'instant, on retourne des stats factices
@@ -24,6 +31,16 @@ const ListsPage: React.FC = () => {
     if (completed === total) return 'Terminé';
     if (completed === 0) return 'Nouveau';
     return 'En cours';
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    const created = await createList({ name: name.trim() });
+    if (created) {
+      setName('');
+      await refetch();
+    }
   };
 
   if (isLoading) {
@@ -41,8 +58,23 @@ const ListsPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-900">Mes Listes</h1>
       </div>
 
-      {/* Message d'erreur */}
-      <ErrorMessage error={error} />
+      {/* Erreurs */}
+      <ErrorMessage error={error || createError} />
+
+      {/* Formulaire de création */}
+      <form onSubmit={handleCreate} className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Nom de la nouvelle liste"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          aria-label="Nom de la liste"
+        />
+        <Button type="submit" disabled={!name.trim() || isCreating}>
+          <Plus size={16} /> Créer
+        </Button>
+      </form>
 
       {/* Liste des listes avec Cards */}
       <div className="space-y-3">
